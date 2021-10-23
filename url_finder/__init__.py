@@ -168,7 +168,14 @@ tlds = [
     "WEDDING", "WEIBO", "WEIR", "WF", "WHOSWHO", "WIEN", "WIKI", "WILLIAMHILL",
     "WIN", "WINDOWS", "WINE", "WINNERS", "WME", "WOLTERSKLUWER", "WOODSIDE",
     "WORK", "WORKS", "WORLD", "WOW", "WS", "WTC", "WTF", "XBOX", "XEROX",
-    "XFINITY", "XIHUAN", "XIN", "XN--11B4C3D", "XN--1CK2E1B", "XN--1QQW23A",
+    "XFINITY", "XIHUAN", "XIN", "XXX",
+    "XYZ", "YACHTS", "YAHOO", "YAMAXUN", "YANDEX", "YE", "YODOBASHI", "YOGA",
+    "YOKOHAMA", "YOU", "YOUTUBE", "YT", "YUN", "ZA", "ZAPPOS", "ZARA", "ZERO",
+    "ZIP", "ZM", "ZONE", "ZUERICH", "ZW"
+]
+
+wacky_tlds = [
+    "XN--11B4C3D", "XN--1CK2E1B", "XN--1QQW23A",
     "XN--2SCRJ9C", "XN--30RR7Y", "XN--3BST00M", "XN--3DS443G", "XN--3E0B707E",
     "XN--3HCRJ9C", "XN--3OQ18VL8PN36A", "XN--3PXU8K", "XN--42C2D9A",
     "XN--45BR5CYL", "XN--45BRJ9C", "XN--45Q11C", "XN--4DBRK0CE", "XN--4GBRIM",
@@ -203,46 +210,18 @@ tlds = [
     "XN--VERMGENSBERATER-CTB", "XN--VERMGENSBERATUNG-PWB", "XN--VHQUV",
     "XN--VUQ861B", "XN--W4R85EL8FHU5DNRA", "XN--W4RS40L", "XN--WGBH1C",
     "XN--WGBL6A", "XN--XHQ521B", "XN--XKC2AL3HYE2A", "XN--XKC2DL3A5EE0H",
-    "XN--Y9A3AQ", "XN--YFRO4I67O", "XN--YGBI2AMMX", "XN--ZFR164B", "XXX",
-    "XYZ", "YACHTS", "YAHOO", "YAMAXUN", "YANDEX", "YE", "YODOBASHI", "YOGA",
-    "YOKOHAMA", "YOU", "YOUTUBE", "YT", "YUN", "ZA", "ZAPPOS", "ZARA", "ZERO",
-    "ZIP", "ZM", "ZONE", "ZUERICH", "ZW"
+    "XN--Y9A3AQ", "XN--YFRO4I67O", "XN--YGBI2AMMX", "XN--ZFR164B"
 ]
+
+link = re.compile('((https://)|(http://))?(([0-z]{1,63})[.])?([0-z]{1,63})[.](' + '|'.join(sorted([x.lower() for x in tlds], key=len, reverse=True)) + ')', re.UNICODE)
 
 
 def get_urls(message):
-    found = []
-    while message.lower().strip() != "":
-        f, left = get_url_once(message)
-        message = left
-        if f is not None:
-            found.append(f)
+    message = message.lower().replace("\n", " ").replace("\r", " ").replace("\t", "    ").replace("\u200b", " ").strip()
+    found = [x.group() for x in re.finditer(link, message)]
+    for _ in range(len(found)):
+        if not found[_].startswith("http"):
+            found[_] = "https://" + found[_]
+        if not found[_].endswith("/"):
+            found[_] += '/'
     return found
-
-
-def get_url_once(message):
-    found = None
-    left = ""
-    if len((cut := message.split(".", 1))) > 1:
-
-        front = cut[0].split(" ").pop()
-        behind = cut[1].split(" ")[0]
-
-        left = message.split(front + "." + behind).pop()
-
-        p = behind.split("/")
-        alone = len(p) == 1
-        tld = alpha.sub('', p[0].split(".").pop())
-
-        if tld.strip() != "":
-            if alone:
-                behind = behind.split(tld)[0] + tld
-
-            if front.replace('.', '').strip() != "" and behind.replace(
-                    '.', '').strip() != "" and tld.upper() in tlds:
-                found = front + "." + behind
-    if found is not None:
-        if not found.startswith("http"):
-            found = "https://" + found
-
-    return found, left
