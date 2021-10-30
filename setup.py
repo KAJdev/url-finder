@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
      name='url_finder',  
-     version='0.1.7',
+     version='0.1.8',
      author="kajdev",
      description="An easy utility to extract links from text.",
      long_description=long_description,

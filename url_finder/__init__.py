@@ -213,11 +213,11 @@ wacky_tlds = [
     "XN--Y9A3AQ", "XN--YFRO4I67O", "XN--YGBI2AMMX", "XN--ZFR164B"
 ]
 
-link = re.compile('((https://)|(http://))?(([0-z|\\-]{1,63})[.])?([0-z|\\-]{1,63})[.](' + '|'.join(sorted([x.lower() for x in tlds], key=len, reverse=True)) + ')(/[0-z|/|&|%|\\-|_|.|+|=|~|:|;|?|#|@]{1,2048})?', re.UNICODE)
+link = re.compile('((https://)|(http://))?(([0-z|\\-]{1,63})[.])?([0-z|\\-]{1,63})[.](' + '|'.join(sorted([x.lower() for x in tlds], key=len, reverse=True)) + ')(/[0-z|/|&|%|\\-|_|.|+|=|~|:|;|?|#|@]{1,2048})?', flags=re.UNICODE | re.IGNORECASE)
 
 
 def get_urls(message):
-    message = message.lower().replace("\n", " ").replace("\r", " ").replace("\t", "    ").replace("\u200b", " ").strip()
+    message = message.replace("\n", " ").replace("\r", " ").replace("\t", "    ").replace("\u200b", " ").strip()
     found = [x.group() for x in re.finditer(link, message)]
     for _ in range(len(found)):
         if not found[_].startswith("http"):
