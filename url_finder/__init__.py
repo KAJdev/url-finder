@@ -213,7 +213,7 @@ wacky_tlds = [
     "XN--Y9A3AQ", "XN--YFRO4I67O", "XN--YGBI2AMMX", "XN--ZFR164B"
 ]
 
-link = re.compile('((https://)|(http://))?(([0-z|\\-]{1,63})[.])?([0-z|\\-]{1,63})[.](' + '|'.join(sorted([x.lower() for x in tlds], key=len, reverse=True)) + ')(/[0-z|/|&|%|\\-|_|.]{1,2048})?', re.UNICODE)
+link = re.compile('((https://)|(http://))?(([0-z|\\-]{1,63})[.])?([0-z|\\-]{1,63})[.](' + '|'.join(sorted([x.lower() for x in tlds], key=len, reverse=True)) + ')(/[0-z|/|&|%|\\-|_|.|+|=|~|:|;|?|#|@]{1,2048})?', re.UNICODE)
 
 
 def get_urls(message):
