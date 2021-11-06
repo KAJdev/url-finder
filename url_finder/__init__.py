@@ -222,6 +222,6 @@ def get_urls(message):
     for _ in range(len(found)):
         if not found[_].startswith("http"):
             found[_] = "https://" + found[_]
-        if not found[_].endswith("/"):
-            found[_] += '/'
+        if found[_].endswith("/"):
+            found[_] = found[_][:-1]
     return found
